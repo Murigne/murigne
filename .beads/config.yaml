@@ -1,0 +1,3 @@
+prefix: mu
+issue-prefix: mu
+dolt.idle-timeout: "0"
