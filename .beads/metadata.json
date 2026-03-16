@@ -1,8 +1,9 @@
 {
-  "backend": "dolt",
   "database": "dolt",
-  "dolt_database": "murigne",
+  "backend": "dolt",
   "dolt_mode": "server",
   "dolt_server_host": "127.0.0.1",
-  "dolt_server_port": 45151
+  "dolt_server_port": 45151,
+  "dolt_database": "murigne",
+  "project_id": "95742d6c-34f3-4183-90ff-601a4a2404c9"
 }
