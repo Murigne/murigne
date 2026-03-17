@@ -25,7 +25,7 @@ export const Card = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "rounded-[1.75rem] border bg-card text-card-foreground",
+        "rounded-xl border bg-card text-card-foreground",
         cardVariants({ variant }),
         className,
       )}
