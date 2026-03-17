@@ -14,10 +14,27 @@ Primary references:
 - Bloomberg Terminal: data density, information hierarchy
 - Apple Finance app: clean typography, smooth transitions
 - Linear.app: refined spacing, subtle surfaces
-- kms-web (internal): dashboard card patterns, branded header, feature-organized layout
 
-Never: garish colors, heavy drop shadows, gradient overload, decorative elements
-that do not carry information.
+Design principles borrowed from the kms-web internal reference
+(for human context only — agents cannot access kms-web directly):
+- Dashboard cards use a flat surface with 1px --murigne-border border,
+  no drop shadow, 12px border radius
+- Branded header: navy background, gold accent on active nav item,
+  Geist Sans logo lockup at 18px / 500 weight
+- Feature sections separated by 48px vertical spacing, not dividers
+- Stat values use tabular numerals (font-variant-numeric: tabular-nums)
+  so columns of numbers align without a monospace font
+
+Never: garish colors, heavy drop shadows, gradient overload, decorative
+elements that do not carry information.
+
+## Dark Mode
+Murigne is light mode only for Phase 1 and Phase 2.
+Do not introduce dark mode CSS variables, dark: Tailwind variants,
+or prefers-color-scheme media queries.
+Dark mode will be evaluated for Phase 3.
+Any agent that adds dark mode classes without explicit instruction
+is introducing out-of-scope work.
 
 ## Color System
 All colors are defined as CSS variables in app/globals.css.
@@ -37,10 +54,29 @@ Semantic colors:
 - --color-warning: #D97706 — marginal scores, caution signals
 - --color-neutral: #6B7280 — neutral data, N/A states
 
+## ECharts Theme Configuration
+The Murigne ECharts theme is defined in lib/echarts-theme.ts.
+Always import and register this theme before initialising any ECharts instance.
+Never pass inline color arrays to ECharts. Never use the default ECharts palette.
+
+The theme maps the Murigne palette:
+- color: [--murigne-navy, --murigne-gold, --color-positive,
+          --color-warning, --color-negative, --murigne-slate]
+- backgroundColor: 'transparent'
+- textStyle: { fontFamily: 'Geist Sans, Inter, sans-serif', fontSize: 12 }
+- axisLine and splitLine use --murigne-border
+
+Import and register before use:
+  import { murigne } from '@/lib/echarts-theme'
+  echarts.registerTheme('murigne', murigne)
+  const chart = echarts.init(el, 'murigne', { renderer: 'canvas' })
+
 ## Typography
 - Primary font: Geist Sans — mirrors SF Pro optical weight and spacing
 - Fallback: Inter
-- Never use decorative or experimental fonts — this is a financial platform
+- Never use decorative or experimental fonts
+- Always apply font-variant-numeric: tabular-nums on any element displaying
+  numbers in columns or tables
 
 Type scale:
 - Display: 48px / 500 weight — hero headlines only
@@ -54,7 +90,8 @@ Type scale:
 ## Layout System
 
 ### Page Shell
-Every page uses the navigation shell from components/navigation/navigation-shell.tsx.
+Every page uses:
+  components/navigation/navigation-shell.tsx
 Never create page-local navigation. Never nest navigation shells.
 
 ### Grid System
@@ -66,55 +103,67 @@ Never create page-local navigation. Never nest navigation shells.
 ### Card Patterns
 Four card types — use the correct one for each context:
 
-1. Stat Card (components/ui/stat-display.tsx)
+1. Stat Card
+   Component: components/ui/stat-display.tsx
    For: single KPI values (ROA, ROE, NIM, CAR)
    Contains: metric label, value, YoY change indicator, benchmark comparison
    Never put charts inside stat cards
 
-2. Ratio Card (components/ui/ratio-display.tsx)
+2. Ratio Card
+   Component: components/ui/ratio-display.tsx
    For: CAMEL ratios with formula context
    Contains: ratio name, value, formula tooltip, BoG benchmark, vintage label
-   Always show the formula on hover — never hide it
+   Always show formula on hover — never hide it
 
 3. Chart Card
+   Component: components/ui/chart-card.tsx
    For: time series, radar charts, scatter plots
-   Contains: chart title, time range selector, data source label, chart
-   Always show data vintage in the card footer
+   Contains: chart title, time range selector, data source label, chart canvas
+   Always show data vintage in card footer
 
 4. Table Card
+   Component: components/ui/table-card.tsx
    For: comparison tables, screener results, bank universe
    Contains: title, filter controls, TanStack Table, export button
    Always use TanStack Table with row virtualisation — never plain HTML tables
 
 ## Component Conventions
 
+### Market Summary Strip
+Component: components/ui/market-strip.tsx
+Displays: GSE Composite Index, BoG MPR, GHS/USD rate, GHS/GBP rate
+Used on: Home / Dashboard page and Sector Dashboard page
+Always import from this shared component — never build an inline market strip.
+Always show the date of last update.
+
 ### Data Vintage Labels
+Component: components/ui/vintage-label.tsx
 Every piece of financial data must have a vintage label showing:
 - Source (e.g. "Annual Report 2023")
 - Period (e.g. "FY2023")
-- Audited/Unaudited flag
-Use components/ui/vintage-label.tsx — never build inline vintage displays.
+- Audited / Unaudited flag
+Never build inline vintage displays — always use this component.
 
 ### Formula Tooltips
+Component: components/ui/formula-tooltip.tsx
 Every ratio display must show the formula on hover.
-Use components/ui/formula-tooltip.tsx.
 Format: "Net Income / Average Total Assets"
 Never abbreviate formulas in tooltips.
 
 ### CAMEL Score Radar
 The CAMEL composite score always displays as:
-1. Radar chart (Apache ECharts) showing all 5 components
+1. Radar chart (Apache ECharts, murigne theme) showing all 5 components
 2. Numeric composite score below the chart
 3. Score band label (Strong / Satisfactory / Fair / Marginal / Unsatisfactory)
 4. Peer percentile rank
 Never show CAMEL score as a bar chart or table only.
+Never show fewer than all 5 CAMEL components on the radar.
 
 ### Loading States
 Every data-fetching component must have three states:
 1. Loading: skeleton placeholders matching the shape of the loaded content
 2. Error: error message with retry button and data source reference
 3. Empty: empty state with explanation of why no data exists
-
 Never show a blank white area while data loads.
 
 ### Mobile Responsiveness
@@ -133,22 +182,24 @@ Use for: price charts, yield curves, NIM trend lines, any time series
 - Color scheme must use CSS variables — never hardcoded colors
 
 ### Apache ECharts
-Use for: CAMEL radar, bar charts, scatter plots (P/B vs ROE), heatmaps, stress test outputs
+Use for: CAMEL radar, bar charts, scatter plots (P/B vs ROE),
+         heatmaps, stress test outputs, correlation matrix
 - Always use canvas renderer: { renderer: 'canvas' }
 - Always handle resize with ResizeObserver
-- Always use the Murigne color palette via echarts theme config
+- Always initialise with the murigne theme (see ECharts Theme Configuration above)
 - Radar charts: always show all 5 CAMEL components, never fewer
 
 ### D3.js
 Use ONLY for: efficient frontier visualisation, custom bespoke layouts
 that ECharts and TradingView cannot handle.
-Never use D3 for bar charts, line charts, or radar charts — use ECharts instead.
+Never use D3 for bar charts, line charts, or radar charts.
 
 ## Page-by-Page Layout Guide
 
 ### Home / Dashboard
-- Hero: Murigne branding, market summary strip (GSE index, MPR, GHS/USD)
-- Row 1: 4 stat cards — total listed banks, sector average CAR, sector average NPL, sector average NIM
+- Market summary strip (full width): components/ui/market-strip.tsx
+- Row 1: 4 stat cards — total listed banks, sector average CAR,
+  sector average NPL, sector average NIM
 - Row 2: Bank universe table (TanStack Table) with CAMEL score column
 - Row 3: Sector NIM trend chart (TradingView) + MPR overlay
 
@@ -171,21 +222,24 @@ Never use D3 for bar charts, line charts, or radar charts — use ECharts instea
 - Export to CSV button
 
 ### Sector Dashboard
-- Market summary strip at top
+- Market summary strip (full width): components/ui/market-strip.tsx
 - Row 1: 4 sector aggregate stat cards
 - Row 2: Sector NIM trend + NPL trend (TradingView, side by side)
 - Row 3: MPR overlay chart + GDP credit cycle chart
 - Row 4: Bank ranking table by CAMEL composite score
 
 ### Stress Testing Page
-- Scenario selector: pre-built scenarios + custom sliders
-- Results: traffic-light grid (banks as rows, scenarios as columns)
-- Detail panel: selected bank + selected scenario — CAR impact, ROE impact, net income impact
-- Correlation matrix heatmap (ECharts) below the grid
+- Scenario selector: pre-built scenarios dropdown + custom single-variable sliders
+- Results: traffic-light grid — banks as rows, scenarios as columns,
+  RAG status per cell (CAR breach = red, within 2pp = amber, clear = green)
+- Detail panel: selected bank + selected scenario —
+  CAR impact, ROE impact, net income impact
+- Correlation matrix heatmap (ECharts, murigne theme) below the grid
 
 ## Accessibility
 - All interactive elements must be keyboard navigable
-- All charts must have accessible text alternatives (aria-label with key data points)
-- Color is never the only signal — always pair color with icon or text label
+- All charts must have accessible text alternatives
+  (aria-label describing key data points — not just "chart")
+- Color is never the only signal — always pair with icon or text label
 - Minimum contrast ratio 4.5:1 for all text
 - Focus indicators must be visible on all interactive elements

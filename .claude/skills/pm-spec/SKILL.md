@@ -2,30 +2,45 @@
 
 ## Purpose
 This skill guides the Mayor and any PM-role agent on how to:
-1. Break down features into well-defined user stories
-2. Write acceptance criteria that engineering agents can execute against
-3. Define UI specifications that frontend agents can implement without ambiguity
+1. Break down features into well-defined beads
+2. Write acceptance criteria that engineering polecats can execute against
+3. Define UI specifications that frontend polecats can implement without ambiguity
 4. Prioritise features against the Murigne roadmap phases
 5. Ensure every feature serves a specific user segment
 
+## Gastown Context
+In the Murigne workspace, the Mayor is the AI coordinator for the murigne rig.
+The Mayor does not write code. The Mayor creates beads, assembles convoys,
+and slings work to polecats. Polecats are the worker agents that execute beads.
+The Refinery manages the merge queue — it processes polecat branches into main,
+handling conflicts and ensuring code quality before changes land.
+
+When a feature is complete and all acceptance criteria are verified:
+- The polecat marks its bead done
+- The Refinery merges the branch into main
+- The Mayor is notified via the convoy
+
+"Committed to main via refinery" means the Refinery has merged the work.
+This is the final step in the definition of done.
+
 ## Core PM Principle
-Never hand a vague requirement to an engineering agent.
-Every feature handed to an agent must have:
+Never sling a vague bead to a polecat.
+Every bead must have:
 - A clear user story (who, what, why)
 - Explicit acceptance criteria (done means done)
 - A UI specification (what the user sees)
-- An API contract (what data is needed)
+- An API contract (what data the frontend needs)
 - A test specification (how to verify it works)
 
-Ambiguity is the enemy of good software.
-If a requirement is unclear, resolve it before creating the bead.
+Ambiguity is the enemy. If a requirement is unclear, resolve it before
+creating the bead. Do not sling an incomplete bead.
 
 ## User Story Format
 Every feature must be written as:
 
 As a [user segment],
 I want to [action],
-So that [outcome/value].
+So that [outcome / value].
 
 User segments for Murigne:
 - Retail Investor: individual GSE investor, limited financial knowledge
@@ -35,43 +50,97 @@ User segments for Murigne:
 - Platform Admin: internal team managing data entry and quality
 
 ## Acceptance Criteria Format
-Each user story must have 3 to 8 acceptance criteria.
+Each bead must have 3 to 8 acceptance criteria.
 Format: Given [context], When [action], Then [outcome].
 
 Example:
 Given I am on the bank profile page for GCB Bank,
 When I view the CAMEL section,
 Then I see the Capital Adequacy Ratio displayed as a percentage
-  with the BoG benchmark of 13%, a green/red indicator showing
-  whether GCB is above or below benchmark, and a vintage label
-  showing the source and reporting period.
+  with the BoG benchmark of 13%, a green/red/amber indicator showing
+  whether GCB is above, near, or below benchmark, and a vintage label
+  showing the source document, reporting period, and audited flag.
 
-## UI Specification Format
-Every frontend feature must include a UI spec with:
+## Bead Template
+Copy this template exactly when creating a bead for a polecat.
+A bead without all 7 sections is incomplete — do not sling it.
 
+---
+### Bead: [short title]
+
+**User Story**
+As a [user segment],
+I want to [action],
+So that [outcome].
+
+**Acceptance Criteria**
+1. Given [context], When [action], Then [outcome].
+2. Given [context], When [action], Then [outcome].
+3. Given [context], When [action], Then [outcome].
+(3 to 8 criteria)
+
+**UI Specification**
 Page/Component: [name]
 Location: [where it lives in the navigation]
-Layout: [describe the grid, card arrangement, component hierarchy]
-Data displayed: [list every piece of data shown]
-Interactive elements: [list every button, filter, slider, toggle]
+Layout: [grid, card arrangement, component hierarchy]
+Components used: [list exact component paths from components/]
+Data displayed: [every piece of data shown]
+Interactive elements: [every button, filter, slider, toggle]
 Loading state: [describe the skeleton]
-Error state: [describe the error display]
+Error state: [describe the error display and retry behaviour]
 Empty state: [describe what shows when no data exists]
-Mobile behaviour: [describe how it adapts at 375px]
+Mobile behaviour: [how it adapts at 375px]
 
-## API Contract Format
-Every frontend feature must document the API it needs before backend work begins.
-
-Format:
+**API Contract**
 Endpoint: GET /api/v1/[path]
 Purpose: [what this endpoint does]
-Request parameters: [list query params, path params]
-Response shape: [TypeScript interface]
-Error cases: [list possible errors and HTTP codes]
+Request parameters: [query params, path params]
+Response shape:
+  [TypeScript interface — frontend agent defines this first]
+Error cases: [possible errors and HTTP codes]
 Caching: [how long this response can be cached]
 
+**Test Specification**
+Vitest unit tests:
+- [list each computation or logic that needs a unit test]
+- Each financial model test must use known inputs with expected outputs
+  verified against manual CFA-standard calculations
+
+Playwright E2E tests:
+- [list each user flow that needs an E2E test]
+- Each acceptance criterion should map to at least one E2E test
+
+**References**
+- Roadmap: docs/ROADMAP.md § [relevant section]
+- Engineering standards: AGENTS.md § [relevant section]
+- Skills: skills/[relevant skill(s)]
+---
+
+## API Contract Ownership
+The frontend agent defines the TypeScript response interface first,
+as part of the bead. This is the contract.
+The backend polecat implements the FastAPI endpoint to match that contract exactly.
+The backend must not change the response shape without updating the bead
+and notifying the Mayor.
+
+Example response interface (frontend agent writes this):
+  interface BankCamelRatios {
+    bankId: string
+    period: string
+    source: string
+    audited: boolean
+    capital: {
+      car: number | null
+      tier1CapitalRatio: number | null
+      leverageRatio: number | null
+    }
+    // ... etc
+  }
+
+The backend returns JSON that satisfies this interface.
+TypeScript strict mode on the frontend will catch any mismatch at build time.
+
 ## Feature Prioritisation Framework
-Use the Murigne roadmap phases as the primary prioritisation guide.
 
 Phase 0 (foundation — build first):
 - Project scaffold and design system
@@ -94,13 +163,13 @@ Phase 2 (growth — build third):
 
 Phase 3 and 4 (scale — build later):
 - Automated PDF extraction
-- VaR/CVaR tools
+- VaR / CVaR tools
 - Mobile app
 - Non-bank companies
 - Private wealth tools
 
-When a new feature request comes in, always assign it to a phase before creating beads.
-Never build Phase 2 features before Phase 1 is complete.
+When a new feature request comes in, always assign it to a phase before
+creating a bead. Never sling a Phase 2 bead before Phase 1 is complete.
 
 ## Page Specifications
 
@@ -117,14 +186,15 @@ Tabs: Overview | CAMEL | Valuation | Financials | Fixed Income
 Overview tab layout:
 - Header row: bank name, logo, listing date, market cap, last closing price,
   52-week high/low, shares outstanding
-- Row 1: 4 stat cards — ROA, ROE, NIM, CAR (each with benchmark and YoY change)
+- Row 1: 4 stat cards — ROA, ROE, NIM, CAR
+  (each with benchmark, YoY change, and vintage label)
 - Row 2 left (60%): CAMEL radar chart with composite score and score band label
-- Row 2 right (40%): 5Cs qualitative credit summary (Character, Capacity,
-  Capital, Collateral, Conditions — each with a short qualitative assessment)
+- Row 2 right (40%): 5Cs qualitative credit summary
+  (Character, Capacity, Capital, Collateral, Conditions — short qualitative text each)
 - Row 3 left (50%): DDM intrinsic value vs current market price
-  (show discount/premium percentage)
+  (show discount / premium percentage)
 - Row 3 right (50%): RI-implied P/B vs actual P/B
-  (show overvalued/undervalued signal)
+  (show overvalued / undervalued / fairly valued signal)
 - Footer: data vintage summary — most recent data period, source, audited flag
 
 CAMEL tab layout:
@@ -136,28 +206,29 @@ CAMEL tab layout:
 
 Valuation tab layout:
 - DDM section:
-  - Input assumptions panel: Rf (auto-populated from BoG T-bill), Beta,
-    Rm (auto-populated from GSE index), Dividend Payout Ratio, ROE
+  - Input assumptions panel: Rf (auto-populated from BoG T-bill),
+    Beta, Rm (auto-populated from GSE index), Dividend Payout Ratio, ROE
   - Computed outputs: r (required return), g (sustainable growth), intrinsic value
   - Sensitivity table: intrinsic value at different g and r combinations
 - RI Model section:
   - Input assumptions panel: current BV per share, ROE, r, g
   - Computed outputs: residual income, intrinsic value, justified P/B
-  - RI-implied P/B vs actual P/B chart (bar chart, ECharts)
-- Disclaimer: clearly labelled as estimates, not targets or investment advice
+  - RI-implied P/B vs actual P/B (bar chart, ECharts, murigne theme)
+- Disclaimer: "These are model estimates, not investment targets or advice."
 
 Financials tab layout:
 - Toggle: Income Statement | Balance Sheet | Cash Flow
 - Common-size toggle: show as absolute values or % of total
 - Year selector: show 1, 3, or 5 years
-- TanStack Table with year columns and ratio rows
+- TanStack Table with year columns and line-item rows
 - Vintage labels on each year column header
 
 Fixed Income tab layout:
 - Only shown if bank has listed bonds
 - Bond table: bond name, ISIN, maturity, coupon, YTM, duration,
   credit spread vs 91-day T-bill
-- If no bonds listed: empty state explaining the bank has no listed bonds
+- If no bonds listed: empty state — "This bank has no bonds listed
+  on the Ghana Fixed Income Market."
 
 ### Screener Page — Full Spec
 
@@ -170,12 +241,12 @@ without manually reviewing each bank's annual report.
 Layout:
 - Left panel (280px, collapsible): filter controls
   - CAMEL composite score range slider
-  - Individual ratio filters (min/max inputs for each ratio)
-  - Pre-built screens dropdown: High CAMEL Score, Low NPL, ROE above Cost of Equity,
-    Trading below RI-implied book value
+  - Individual ratio filters (min / max inputs for each ratio)
+  - Pre-built screens dropdown: High CAMEL Score, Low NPL,
+    ROE above Cost of Equity, Trading below RI-implied book value
   - Clear filters button
-  - Save screen button (registered users only)
-- Right panel: TanStack Table
+  - Save screen button (registered users only — Clerk auth gate)
+- Right panel: TanStack Table with row virtualisation
   - Columns: Bank | CAMEL Score | CAR | NPL Ratio | ROE | ROA | NIM | P/B | P/E
   - All columns sortable
   - Column visibility toggle
@@ -190,7 +261,10 @@ Acceptance criteria:
 - Given I click Export to CSV,
   When the download completes,
   Then the CSV contains all visible columns for all filtered rows,
-  With vintage labels in a separate column.
+  With a vintage label column showing source and period for each bank.
+- Given I am not logged in and click Save Screen,
+  When the auth modal appears,
+  Then I am prompted to register or log in via Clerk.
 
 ### Sector Dashboard — Full Spec
 
@@ -201,8 +275,8 @@ So that I can understand the overall health of the sector before
 deciding which banks to research further.
 
 Layout:
-- Market summary strip (full width): GSE Composite Index, MPR, GHS/USD, GHS/GBP
-  (updated daily)
+- Market summary strip (full width): components/ui/market-strip.tsx
+  GSE Composite Index | BoG MPR | GHS/USD | GHS/GBP — updated daily
 - Row 1: 4 sector aggregate stat cards
   Total sector assets | Sector average CAR | Sector average NPL | Sector average NIM
 - Row 2 left (60%): Sector NIM trend chart (TradingView, 5-year)
@@ -210,33 +284,53 @@ Layout:
 - Row 2 right (40%): Sector NPL trend chart (TradingView, 5-year)
   with GDP growth overlay
 - Row 3: Bank ranking table — all banks ranked by CAMEL composite score
-  with color-coded score bands
-- Row 4: Credit cycle chart — Ghana GDP growth vs sector credit growth (ECharts bar)
+  with color-coded score band labels
+- Row 4: Credit cycle chart — Ghana GDP growth vs sector credit growth
+  (ECharts bar, murigne theme)
 
-## How to Write a Bead for an Engineering Agent
-When the Mayor creates a bead for a frontend or backend agent,
-the bead description must include all of the following:
+### Stress Testing Page — Full Spec
 
-1. User story (who, what, why)
-2. Acceptance criteria (Given/When/Then format, 3 to 8 criteria)
-3. UI specification (layout, components, states)
-4. API contract (endpoint, request, response, errors)
-5. Test specification (what Vitest unit tests and Playwright E2E tests are needed)
-6. Reference to relevant section in docs/ROADMAP.md
-7. Reference to relevant section in AGENTS.md for stack and standards
+User story:
+As an Institutional Investor,
+I want to apply macro stress scenarios to all GSE-listed banks,
+So that I can identify which banks are most vulnerable to economic shocks
+before making portfolio allocation decisions.
 
-A bead without all 7 elements is incomplete.
-Do not sling an incomplete bead to an agent.
+Layout:
+- Scenario selector: pre-built scenarios dropdown
+  (MPR +300bps | NPL +5pp | Cedi -30% | GDP contraction -3%)
+  plus custom single-variable sliders for each input
+- Results: traffic-light grid
+  Rows: banks | Columns: scenarios
+  Cell values: CAR under scenario — red if breach < 13%, amber if within 2pp,
+  green if clear
+- Detail panel: selected bank + selected scenario
+  CAR impact (pp change) | ROE impact (pp change) | Net income impact (GHS)
+- Correlation matrix heatmap (ECharts, murigne theme) below the grid
+  showing pairwise return correlations across all 7 banks
+
+## Definition of Done
+A bead is ONLY complete when all of the following are true:
+1. Feature works exactly as described in the bead
+2. All Vitest unit tests pass
+3. All Playwright E2E tests pass
+4. TypeScript strict mode passes with zero errors
+5. No console errors or warnings
+6. React Server Component boundaries are correct
+7. Financial data displays with source, formula, and vintage labels
+8. Mobile responsive at 375px minimum
+9. Loading, error, and empty states all implemented
+10. Merged to main via the Refinery
 
 ## Launch Readiness Checklist
-Before any feature is considered ready for users:
-- All acceptance criteria verified by QA agent
+Before any feature is visible to users:
+- All acceptance criteria verified
 - All Playwright E2E tests passing
 - All Vitest unit tests passing
-- TypeScript strict mode passing
+- TypeScript strict mode passing with zero errors
 - Data vintage labels present on all financial data
 - Formula tooltips present on all ratio displays
 - Mobile responsive at 375px
-- Empty, loading, and error states implemented
+- Loading, error, and empty states implemented
 - No console errors or warnings
-- Committed to main via refinery
+- Merged to main via the Refinery
