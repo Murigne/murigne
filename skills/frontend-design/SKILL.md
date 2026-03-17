@@ -21,7 +21,7 @@ Design principles borrowed from the kms-web internal reference
   no drop shadow, 12px border radius — never exceed 12px on any card surface
   The previous scaffold used ~28px (rounded-[1.75rem]) which is incorrect and must not be repeated
 - Branded header: navy background, gold accent on active nav item,
-  Inter logo lockup at 18px / 500 weight
+  Satoshi logo lockup at 18px / 500 weight
 - Feature sections separated by 48px vertical spacing, not dividers
 - Stat values use tabular numerals (font-variant-numeric: tabular-nums)
   so columns of numbers align without a monospace font
@@ -64,7 +64,7 @@ The theme maps the Murigne palette:
 - color: [--murigne-navy, --murigne-gold, --color-positive,
           --color-warning, --color-negative, --murigne-slate]
 - backgroundColor: 'transparent'
-- textStyle: { fontFamily: 'Inter, sans-serif', fontSize: 12 }
+- textStyle: { fontFamily: 'Satoshi, Inter, sans-serif', fontSize: 12 }
 - axisLine and splitLine use --murigne-border
 
 Import and register before use:
@@ -73,7 +73,7 @@ Import and register before use:
   const chart = echarts.init(el, 'murigne', { renderer: 'canvas' })
 
 ## Typography
-- Primary font: Inter throughout
+- Primary font: Satoshi throughout
 
 - Never use decorative or experimental fonts
 - Always apply font-variant-numeric: tabular-nums on any element displaying
