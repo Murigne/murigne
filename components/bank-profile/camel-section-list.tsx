@@ -52,8 +52,8 @@ export function CamelSectionList({ sections, bankName }: CamelSectionListProps):
                 <div className="space-y-4">
                   {section.ratios.map((ratio) => (
                     <div key={ratio.key} className="rounded-xl border border-border/70 bg-white px-4 py-4">
-                      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                        <div className="space-y-2">
+                      <div className="flex flex-col gap-5 lg:grid lg:grid-cols-[minmax(0,1.15fr)_20rem] lg:items-start">
+                        <div className="space-y-3">
                           <div className="flex items-center gap-3">
                             <h4 className="text-base font-semibold text-brand-navy">{ratio.label}</h4>
                             <FormulaTooltip
@@ -65,7 +65,7 @@ export function CamelSectionList({ sections, bankName }: CamelSectionListProps):
                           </div>
                           <p className="text-sm leading-6 text-muted-foreground">{ratio.definition}</p>
                         </div>
-                        <div className="grid gap-3 sm:grid-cols-2 lg:w-[25rem]">
+                        <div className="grid gap-3 rounded-xl border border-border/70 bg-muted/20 p-3 sm:grid-cols-2 lg:self-stretch">
                           <Metric label="Value" value={formatRatioValue(ratio.value, ratio.unit)} />
                           <Metric label="Prior year" value={formatRatioValue(ratio.priorValue, ratio.unit)} />
                           <Metric
@@ -77,18 +77,18 @@ export function CamelSectionList({ sections, bankName }: CamelSectionListProps):
                       </div>
                       <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
                         <div>
-                          <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Trend placeholder</p>
                           <div
                             aria-label={`${ratio.label} trend from ${ratio.trend[0]?.period ?? "N/A"} to ${ratio.trend.at(-1)?.period ?? "N/A"}.`}
-                            className="mt-2 flex min-h-[84px] items-end gap-2 rounded-xl border border-dashed border-border bg-muted/30 px-3 py-4"
+                            className="flex min-h-[96px] items-end gap-2 rounded-xl border border-border/70 bg-muted/25 px-3 py-4"
                             role="img"
                           >
                             {ratio.trend.map((point) => (
                               <div key={point.period} className="flex flex-1 flex-col items-center gap-2">
                                 <div
-                                  className="w-full rounded-t bg-brand-navy/70"
+                                  aria-hidden="true"
+                                  className="murigne-skeleton w-full rounded-t"
                                   style={{
-                                    height: `${Math.max(16, Math.round((point.value ?? 0) * 280))}px`,
+                                    height: `${Math.max(20, Math.round((point.value ?? 0) * 280))}px`,
                                   }}
                                 />
                                 <span className="text-[11px] text-muted-foreground">{point.period}</span>
@@ -120,7 +120,7 @@ export function CamelSectionList({ sections, bankName }: CamelSectionListProps):
 
 function Metric({ label, value }: { label: string; value: string }): React.JSX.Element {
   return (
-    <div className="rounded-xl border border-border/70 bg-muted/35 px-3 py-3">
+    <div className="rounded-xl border border-border/70 bg-white px-3 py-3">
       <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
       <p className="mt-2 text-sm font-semibold text-brand-navy [font-variant-numeric:tabular-nums]">{value}</p>
     </div>

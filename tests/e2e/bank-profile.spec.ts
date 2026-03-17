@@ -18,7 +18,12 @@ test("renders the bank profile header and overview cards", async ({ page }) => {
 test("switches tabs and renders their active content", async ({ page }) => {
   await page.goto("/banks/gcb-bank");
 
-  await page.getByRole("tab", { name: "CAMEL" }).click();
+  const camelTab = page.getByRole("tab", { name: "CAMEL" });
+  await camelTab.click();
+  await expect(camelTab).toHaveAttribute("aria-selected", "true");
+  await expect(camelTab).toHaveClass(/bg-brand-navy\/8/);
+  await expect(camelTab).not.toHaveClass(/text-white/);
+
   const camelPanel = page
     .getByRole("tabpanel")
     .filter({ has: page.getByRole("heading", { name: "Capital Adequacy", exact: true }) });
@@ -54,6 +59,8 @@ test("expands CAMEL sections and exposes ratio details", async ({ page }) => {
   await expect(capitalAdequacyCard.getByText("BoG minimum 13%", { exact: true })).toBeVisible();
   await expect(capitalAdequacyCard.getByText("BoG Capital Requirements Directive", { exact: true })).toBeVisible();
   await expect(capitalAdequacyCard.getByText("Q4 2025", { exact: true })).toBeVisible();
+  await expect(camelPanel.getByText("Trend placeholder", { exact: true })).toHaveCount(0);
+  await expect(camelPanel.getByText("TREND PLACEHOLDER", { exact: true })).toHaveCount(0);
 });
 
 test("updates financial statement controls without losing headers", async ({ page }) => {
@@ -77,7 +84,7 @@ test("supports the 375px mobile layout with horizontal financial scrolling", asy
   const context = await browser.newContext({ viewport: { width: 375, height: 812 } });
   const page = await context.newPage();
 
-  await page.goto(`${process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:3000"}/banks/gcb-bank`);
+  await page.goto("/banks/gcb-bank");
   await page.getByRole("tab", { name: "Financials" }).click();
 
   const tableContainer = page.locator("table").first();

@@ -42,7 +42,7 @@ export function BankProfileTabs({ profile }: BankProfileTabsProps): React.JSX.El
       <div className="overflow-x-auto">
         <div
           aria-label="Bank profile sections"
-          className="inline-flex min-w-full gap-2 rounded-xl border border-border/80 bg-white p-2"
+          className="inline-flex min-w-full gap-1.5 rounded-xl border border-border/80 bg-white p-1.5"
           role="tablist"
         >
           {tabs.map((tab) => {
@@ -54,8 +54,10 @@ export function BankProfileTabs({ profile }: BankProfileTabsProps): React.JSX.El
                 aria-controls={`${tabListId}-${tab.id}-panel`}
                 aria-selected={selected}
                 className={cn(
-                  "rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition",
-                  selected ? "bg-brand-navy text-white" : "text-muted-foreground hover:bg-muted hover:text-brand-navy",
+                  "rounded-lg border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors",
+                  selected
+                    ? "border-brand-navy/15 bg-brand-navy/8 text-brand-navy"
+                    : "border-transparent text-muted-foreground hover:bg-muted/70 hover:text-brand-navy",
                 )}
                 id={`${tabListId}-${tab.id}`}
                 onClick={() => setActiveTab(tab.id)}

@@ -1,13 +1,26 @@
 import { Badge } from "@/components/ui/badge";
 import { type VintageHighlight } from "@/lib/mock-data";
+import { cn } from "@/lib/utils";
 
 type VintageLabelProps = {
   vintage: VintageHighlight;
+  align?: "start" | "end";
+  className?: string;
 };
 
-export function VintageLabel({ vintage }: VintageLabelProps): React.JSX.Element {
+export function VintageLabel({
+  vintage,
+  align = "end",
+  className,
+}: VintageLabelProps): React.JSX.Element {
   return (
-    <div className="flex flex-col items-end gap-2 text-right">
+    <div
+      className={cn(
+        "flex flex-col gap-2",
+        align === "end" ? "items-end text-right" : "items-start text-left",
+        className,
+      )}
+    >
       <Badge tone={vintage.auditStatus === "Audited" ? "success" : "warning"} variant="soft">
         {vintage.auditStatus}
       </Badge>
