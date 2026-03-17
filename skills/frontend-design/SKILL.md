@@ -18,7 +18,8 @@ Primary references:
 Design principles borrowed from the kms-web internal reference
 (for human context only — agents cannot access kms-web directly):
 - Dashboard cards use a flat surface with 1px --murigne-border border,
-  no drop shadow, 12px border radius
+  no drop shadow, 12px border radius — never exceed 12px on any card surface
+  The previous scaffold used ~28px (rounded-[1.75rem]) which is incorrect and must not be repeated
 - Branded header: navy background, gold accent on active nav item,
   Geist Sans logo lockup at 18px / 500 weight
 - Feature sections separated by 48px vertical spacing, not dividers
