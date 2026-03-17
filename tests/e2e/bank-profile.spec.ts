@@ -6,6 +6,8 @@ test("renders the bank profile header and overview cards", async ({ page }) => {
   const overviewPanel = page
     .getByRole("tabpanel")
     .filter({ has: page.getByRole("heading", { name: "Credit context", exact: true }) });
+  const contentWidth = await page.getByTestId("bank-profile-content").evaluate((element) => element.clientWidth);
+  const minimumExpectedWidth = (page.viewportSize()?.width ?? 0) >= 1024 ? 900 : 320;
 
   await expect(page.getByRole("heading", { name: "GCB Bank PLC" })).toBeVisible();
   await expect(page.getByText("Latest vintage summary")).toBeVisible();
@@ -13,6 +15,7 @@ test("renders the bank profile header and overview cards", async ({ page }) => {
   await expect(overviewPanel.getByText("ROE", { exact: true })).toBeVisible();
   await expect(overviewPanel.getByText("NIM", { exact: true })).toBeVisible();
   await expect(overviewPanel.getByText("CAR", { exact: true })).toBeVisible();
+  expect(contentWidth).toBeGreaterThanOrEqual(minimumExpectedWidth);
 });
 
 test("switches tabs and renders their active content", async ({ page }) => {

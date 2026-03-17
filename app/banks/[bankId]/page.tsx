@@ -27,7 +27,7 @@ export default async function BankProfilePage({
 
   return (
     <NavigationShell>
-      <div className="space-y-6">
+      <div className="mx-auto w-full max-w-[60rem] space-y-6" data-testid="bank-profile-content">
         <BankHeader profile={profile} />
         <BankProfileTabs profile={profile} />
       </div>
