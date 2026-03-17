@@ -167,11 +167,37 @@ Every data-fetching component must have three states:
 3. Empty: empty state with explanation of why no data exists
 Never show a blank white area while data loads.
 
+### Breakpoints
+Murigne uses the following breakpoint system via Tailwind v4.
+These are the only breakpoints agents should use — never invent custom ones.
+
+- xs: 375px — minimum supported width (iPhone SE)
+- sm: 640px — large phones, small tablets portrait
+- md: 768px — tablets portrait, small laptops
+- lg: 1024px — tablets landscape, laptops
+- xl: 1280px — desktop (primary design target)
+- 2xl: 1440px — wide desktop (max-width for content)
+
+Breakpoint behaviour by layout zone:
+- Sidebar: hidden below lg, bottom navigation shown below lg
+- Top bar: hamburger menu shown below lg, full top bar at lg+
+- Stat cards: 1 column at xs/sm, 2 columns at md, 4 columns at xl+
+- Chart cards: full width at all breakpoints, height reduces at sm/xs
+- Content pages (bank profiles): full width below xl, max-width 960px at xl+
+- Dashboard grid: single column at xs/sm/md, full grid at lg+
+
 ### Mobile Responsiveness
 - All pages must work at 375px minimum width
-- Dashboard sidebar collapses to bottom navigation on mobile
+- Dashboard sidebar collapses to bottom navigation below lg (1024px)
+- Top bar shows hamburger menu below lg — triggers slide-in sidebar sheet
+- Stat cards: 2-column grid at md, 1-column at sm and below
 - Data tables scroll horizontally on mobile — never truncate columns
+- Tables must have a sticky first column (bank name) on mobile
 - Charts resize fluidly — never fixed pixel widths on chart containers
+- Chart height at xs/sm: 220px minimum
+- CAMEL radar chart: 280px diameter minimum on mobile
+- Filter panels (screener, stress test): full screen bottom sheet on mobile
+- Never use user-scalable=no in viewport meta tag
 
 ## Charting Rules
 
