@@ -17,14 +17,20 @@ TARGETS=(
 SKILLS=(financial-data frontend-design pm-spec backend-api database testing performance security accessibility)
 
 for target in "${TARGETS[@]}"; do
+  if [ ! -d "$target" ]; then
+    echo "⚠ skipped target $target (directory does not exist)"
+    continue
+  fi
   for skill in "${SKILLS[@]}"; do
     src="$SKILLS_SRC/$skill/SKILL.md"
-    dst="$target/$skill/SKILL.md"
-    if [ -f "$src" ] && [ -f "$dst" ]; then
+    dst_dir="$target/$skill"
+    dst="$dst_dir/SKILL.md"
+    if [ -f "$src" ]; then
+      mkdir -p "$dst_dir"
       cp "$src" "$dst"
       echo "✓ $skill → $target"
-    elif [ -f "$src" ] && [ ! -f "$dst" ]; then
-      echo "⚠ skipped $skill → $target (destination does not exist)"
+    else
+      echo "⚠ skipped $skill (source does not exist: $src)"
     fi
   done
 done
