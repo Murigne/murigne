@@ -71,6 +71,12 @@ export function NavigationShell({ children }: NavigationShellProps): React.JSX.E
         gridTemplateColumns: sidebarCollapsed ? "5.5rem minmax(0,1fr)" : undefined,
       }}
     >
+      <a
+        href="#main-content"
+        className="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:left-4 focus-visible:top-4 focus-visible:z-50 focus-visible:rounded-md focus-visible:bg-white focus-visible:px-4 focus-visible:py-2 focus-visible:text-brand-navy"
+      >
+        Skip to main content
+      </a>
       <aside className={cn("murigne-sidebar", sidebarCollapsed && "px-3")}>
         <div className="flex items-center justify-between gap-3">
           {!sidebarCollapsed ? (
@@ -165,6 +171,8 @@ export function NavigationShell({ children }: NavigationShellProps): React.JSX.E
         </header>
 
         <motion.main
+          id="main-content"
+          tabIndex={-1}
           animate={{ opacity: 1, y: 0 }}
           className="murigne-shell"
           initial={{ opacity: 0, y: 12 }}
