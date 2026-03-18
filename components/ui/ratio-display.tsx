@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { FormulaTooltip } from "@/components/ui/formula-tooltip";
+import { VintageLabel } from "@/components/ui/vintage-label";
 import { type BankHealthRatio } from "@/lib/mock-data";
 
 type RatioDisplayProps = {
@@ -30,6 +31,9 @@ export function RatioDisplay({ ratio }: RatioDisplayProps): React.JSX.Element {
         <Badge tone={ratio.statusTone} variant="soft">
           {ratio.status}
         </Badge>
+      </div>
+      <div className="mt-6 flex justify-end">
+        <VintageLabel vintage={ratio.vintage} />
       </div>
     </Card>
   );
